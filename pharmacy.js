@@ -30,6 +30,10 @@ const updateDafalganBenefit = (drug) => {
   drug.benefit = drug.expiresIn < 0 ? Math.max(drug.benefit - 4, 0) : Math.max(drug.benefit - 2, 0);
 }
 
+const checkMagicPillBenefit = (drug) => {
+  drug.benefit = drug.benefit < 0 ? 0 : Math.min(drug.benefit, 50);
+}
+
 export class Pharmacy {
   constructor(drugs = []) {
     this.drugs = drugs;
@@ -53,6 +57,8 @@ export class Pharmacy {
         } else {
           updateNormalDrugBenefit(this.drugs[i])
         }
+      } else {
+        checkMagicPillBenefit(this.drugs[i]);
       }
 
     }

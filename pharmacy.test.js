@@ -39,13 +39,12 @@ describe("Pharmacy", () => {
     expect(
       new Pharmacy([new Drug('Dafalgan', 0, 0)]).updateBenefitValue()
     ).toEqual([new Drug('Dafalgan', -1, 0)]);
-
     expect(
-    new Pharmacy([new Drug('Magic Pill', 0, 1)]).updateBenefitValue()
-  ).not.toEqual([new Drug('Magic Pill', -1, 0)]);
-  expect(
-    new Pharmacy([new Drug('Magic Pill', 0, 0)]).updateBenefitValue()
-  ).not.toEqual([new Drug('Magic Pill', -1, 0)]);
+      new Pharmacy([new Drug('Magic Pill', 5, -5)]).updateBenefitValue()
+    ).toEqual([new Drug('Magic Pill', 5, 0)]);
+    expect(
+      new Pharmacy([new Drug('Magic Pill', 5, 0)]).updateBenefitValue()
+    ).toEqual([new Drug('Magic Pill', 5, 0)]);
   });
 
   it('should increase the benefit of Herbal Tea by 1 before expiration and by 2 after expiration', () => {
@@ -86,6 +85,12 @@ describe("Pharmacy", () => {
     expect(
       new Pharmacy([new Drug('Dafalgan', 0, 50)]).updateBenefitValue()
     ).not.toEqual([new Drug('Dafalgan', -1, 50)]);
+    expect(
+      new Pharmacy([new Drug('Magic Pill', 5, 60)]).updateBenefitValue()
+    ).toEqual([new Drug('Magic Pill', 5, 50)]);
+    expect(
+      new Pharmacy([new Drug('Magic Pill', 5, 50)]).updateBenefitValue()
+    ).toEqual([new Drug('Magic Pill', 5, 50)]);
   });
 
   it('should not change the benefit or expiration of Magic Pill', () => {
@@ -111,7 +116,7 @@ describe("Pharmacy", () => {
       new Pharmacy([new Drug('Fervex', 0, 10)]).updateBenefitValue()
     ).toEqual([new Drug('Fervex', -1, 0)]);
   });
-  
+
   it('should degrade the benefit of Dafalgan twice as fast as a normal drug before expiration', () => {
     expect(
       new Pharmacy([new Drug('Dafalgan', 2, 10)]).updateBenefitValue()
@@ -121,6 +126,6 @@ describe("Pharmacy", () => {
   it('should degrade the benefit of Dafalgan twice as fast as a normal drug after expiration', () => {
     expect(
       new Pharmacy([new Drug('Dafalgan', 0, 10)]).updateBenefitValue()
-    ).toEqual([new Drug('Dafalgan', -1, 6)]); 
+    ).toEqual([new Drug('Dafalgan', -1, 6)]);
   });
 });
