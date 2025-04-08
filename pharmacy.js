@@ -1,37 +1,51 @@
+const MIN_BENEFIT = 0;
+const MAX_BENEFIT = 50;
+
+const DRUG_NAMES = {
+  HERBAL_TEA: 'Herbal Tea',
+  FERVEX: 'Fervex',
+  DAFALGAN: 'Dafalgan',
+  MAGIC_PILL: 'Magic Pill'
+};
+
 export class Drug {
   constructor(name, expiresIn, benefit) {
     this.name = name;
     this.expiresIn = expiresIn;
     this.benefit = benefit;
   }
-}
 
-const updateNormalDrugBenefit = (drug) => {
-  drug.benefit = drug.expiresIn < 0 ? Math.max(drug.benefit - 2, 0) : Math.max(drug.benefit - 1, 0);
-}
-
-const updateHerbalTeaBenefit = (drug) => {
-  drug.benefit = drug.expiresIn < 0 ? Math.min(drug.benefit + 2, 50) : Math.min(drug.benefit + 1, 50);
-}
-
-const updateFervexBenefit = (drug) => {
-  if (drug.expiresIn < 0) {
-    drug.benefit = 0;
-  } else if (drug.expiresIn < 5) {
-    drug.benefit = Math.min(drug.benefit + 3, 50);
-  } else if (drug.expiresIn < 10) {
-    drug.benefit = Math.min(drug.benefit + 2, 50);
-  } else {
-    drug.benefit = Math.min(drug.benefit + 1, 50);
+  updateNormalDrugBenefit() {
+    this.benefit = this.expiresIn < 0 ? Math.max(this.benefit - 2, MIN_BENEFIT) : Math.max(this.benefit - 1, MIN_BENEFIT);
   }
-}
 
-const updateDafalganBenefit = (drug) => {
-  drug.benefit = drug.expiresIn < 0 ? Math.max(drug.benefit - 4, 0) : Math.max(drug.benefit - 2, 0);
-}
+  updateHerbalTeaBenefit() {
+    this.benefit = this.expiresIn < 0 ? Math.min(this.benefit + 2, MAX_BENEFIT) : Math.min(this.benefit + 1, MAX_BENEFIT);
+  }
 
-const checkMagicPillBenefit = (drug) => {
-  drug.benefit = drug.benefit < 0 ? 0 : Math.min(drug.benefit, 50);
+  updateFervexBenefit() {
+    switch (true) {
+      case (this.expiresIn < 0):
+        this.benefit = MIN_BENEFIT;
+        break;
+      case (this.expiresIn < 5):
+        this.benefit = Math.min(this.benefit + 3, MAX_BENEFIT);
+        break;
+      case (this.expiresIn < 10):
+        this.benefit = Math.min(this.benefit + 2, MAX_BENEFIT);
+        break;
+      default:
+        this.benefit = Math.min(this.benefit + 1, MAX_BENEFIT);
+    }
+  }
+
+  updateDafalganBenefit() {
+    this.benefit = this.expiresIn < 0 ? Math.max(this.benefit - 4, MIN_BENEFIT) : Math.max(this.benefit - 2, MIN_BENEFIT);
+  }
+
+  checkMagicPillBenefit() {
+    this.benefit = this.benefit < MIN_BENEFIT ? MIN_BENEFIT : Math.min(this.benefit, MAX_BENEFIT);
+  }
 }
 
 export class Pharmacy {
@@ -39,30 +53,29 @@ export class Pharmacy {
     this.drugs = drugs;
   }
 
-
   updateBenefitValue() {
+    for (let i = 0; i < this.drugs.length; i++) {
+      const drug = this.drugs[i];
 
-    for (var i = 0; i < this.drugs.length; i++) {
-
-      if (this.drugs[i].name !== "Magic Pill") {
-        this.drugs[i].expiresIn -= 1;
-        if (this.drugs[i].name === "Herbal Tea") {
-          updateHerbalTeaBenefit(this.drugs[i])
-        }
-        else if (this.drugs[i].name === "Fervex") {
-          updateFervexBenefit(this.drugs[i])
-        }
-        else if (this.drugs[i].name === "Dafalgan") {
-          updateDafalganBenefit(this.drugs[i])
-        } else {
-          updateNormalDrugBenefit(this.drugs[i])
+      if (drug.name !== DRUG_NAMES.MAGIC_PILL) {
+        drug.expiresIn -= 1;
+        switch (this.drugs[i].name) {
+          case "Herbal Tea":
+            drug.updateHerbalTeaBenefit(this.drugs[i]);
+            break;
+          case "Fervex":
+            drug.updateFervexBenefit(this.drugs[i]);
+            break;
+          case "Dafalgan":
+            drug.updateDafalganBenefit(this.drugs[i]);
+            break;
+          default:
+            drug.updateNormalDrugBenefit(this.drugs[i]);
         }
       } else {
-        checkMagicPillBenefit(this.drugs[i]);
+        drug.checkMagicPillBenefit();
       }
-
     }
     return this.drugs;
-
   }
 }
